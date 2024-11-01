@@ -1,0 +1,30 @@
+name: Deploy Projects
+
+on:
+  push:
+    branches:
+      - main # Adjust this to your main branch name
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository content
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js (if using any static site generators or build tools)
+        uses: actions/setup-node@v3
+        with:
+          node-version: "14" # Adjust as needed
+
+      # Deploy each project in Projects folder to GitHub Pages
+      - name: Deploy Projects
+        run: |
+          for project in Projects/*; do
+            if [ -d "$project" ]; then
+              project_name=$(basename $project)
+              git subtree push --prefix $project origin gh-pages-$project_name
+            fi
+          done
